@@ -15,7 +15,6 @@ function generateHtmlPlugins(templateDir) {
     return new HtmlWebpackPlugin({
       filename: `${name}.html`,
       template: path.resolve(__dirname, `${templateDir}/${name}.${extension}`),
-      inject: false,
     })
   })
 }
@@ -32,7 +31,7 @@ module.exports = {
     './src/js/index.js'
   ],
   output: {
-    filename: './js/main.js'
+    filename: './js/[name].[contenthash].js'
   },
   devtool: "source-map",
   module: {
@@ -79,7 +78,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: './css/main.css',
+      filename: './css/[name].[contenthash].css',
       chunkFilename: './css/[id].css',
     }),
     new CopyWebpackPlugin({
