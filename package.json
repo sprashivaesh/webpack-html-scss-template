@@ -2,7 +2,7 @@
   "name": "webpack-html-scss-template",
   "version": "1.0.0",
   "description": "",
-  "main": "webpack.config.js",
+  "private": true,
   "scripts": {
     "start": "NODE_ENV=development webpack-dev-server --mode=development --open",
     "build": "del-cli dist && NODE_ENV=production webpack --mode=production && html dist/*.html --indent-size 2",
@@ -31,5 +31,7 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   },
-  "dependencies": {}
+    "dependencies": {
+    "normalize.css": "^8.0.1"
+  }
 }
