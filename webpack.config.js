@@ -1,11 +1,10 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const devMode = process.env.NODE_ENV !== 'production';
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs')
 
-const CopyWebpackPlugin= require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 function generateHtmlPlugins(templateDir) {
   const templateFiles = fs.readdirSync(path.resolve(__dirname, templateDir));
@@ -49,12 +48,27 @@ module.exports = {
         }
       },
       {
-        test:/\.(s*)css$/,
+        test: /\.(ttf|eot|woff|woff2|svg)$/,
+        include: path.resolve(__dirname, 'src/fonts'),
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'fonts/',
+            esModule: false,
+          },
+        },
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        include: path.resolve(__dirname, 'src/scss'),
         use: [
-          MiniCssExtractPlugin.loader,
+          process.env.NODE_ENV !== 'production'
+            ? 'style-loader'
+            : MiniCssExtractPlugin.loader,
           'css-loader',
           'sass-loader',
-        ]
+        ],
       },
       {
         test: /\.html$/,
@@ -65,15 +79,11 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: devMode ? './css/style.[name].css' : './css/style.[name].[hash].css',
-      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+      filename: './css/main.css',
+      chunkFilename: './css/[id].css',
     }),
     new CopyWebpackPlugin({
       patterns: [
-        {
-          from: './src/fonts',
-          to: './fonts'
-        },
         {
           from: './src/favicon',
           to: './favicon'
