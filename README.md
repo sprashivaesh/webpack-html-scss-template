@@ -4,9 +4,9 @@
 
 ### `npm start`
 
-Запустится http сервер с hot-reload
-[http://localhost:9000](http://localhost:9000) в браузере.
+Running http-server with page hot-reloading 
+[http://localhost:9000](http://localhost:9000) in browser.
 
 ### `npm run build`
 
-Запуск сборка проекта в папку dist со страницами, папками и файлами
+Running project build into dist folder with pages, folders and files

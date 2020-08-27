@@ -1,10 +1,12 @@
 const path = require('path');
+const fs = require('fs');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const fs = require('fs')
-
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+
+const isDev = process.env.NODE_ENV === 'development'
+const isProd = !isDev
 
 function generateHtmlPlugins(templateDir) {
   const templateFiles = fs.readdirSync(path.resolve(__dirname, templateDir));
@@ -19,26 +21,32 @@ function generateHtmlPlugins(templateDir) {
   })
 }
 
-const htmlPlugins = generateHtmlPlugins('./src/html/views')
+const htmlPlugins = generateHtmlPlugins(path.resolve(__dirname, 'src/html/views'))
 
 module.exports = {
+  context: path.resolve(__dirname, 'src'),
   devServer: {
-    contentBase: path.join(__dirname, 'dist'),
+    contentBase: path.resolve(__dirname, 'dist'),
     compress: true,
-    port: 9000
+    port: 9000,
+    hot: isDev
   },
-  entry: [
-    './src/js/index.js'
-  ],
+  entry: ['@babel/polyfill', './assets/js/index.js'],
   output: {
-    filename: './js/[name].[contenthash].js'
+    filename: './js/[name].[hash].js'
   },
-  devtool: "source-map",
+  optimization: {
+    splitChunks: {
+      chunks: "all"
+    }
+  },
+  devtool: isDev ? 'source-map' : false,
   module: {
     rules: [
       {
         test: /\.js$/,
-        include: path.resolve(__dirname, 'src/js'),
+        include: path.resolve(__dirname, 'src/assets/js'),
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -47,8 +55,20 @@ module.exports = {
         }
       },
       {
+        test: /\.(png|jpe?g|gif)$/i,
+        include: path.resolve(__dirname, 'src/assets/images'),
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'images/',
+            esModule: false,
+          },
+        },
+      },
+      {
         test: /\.(ttf|eot|woff|woff2|svg)$/,
-        include: path.resolve(__dirname, 'src/fonts'),
+        include: path.resolve(__dirname, 'src/assets/fonts'),
         use: {
           loader: 'file-loader',
           options: {
@@ -59,14 +79,47 @@ module.exports = {
         },
       },
       {
-        test: /\.s[ac]ss$/i,
-        include: path.resolve(__dirname, 'src/scss'),
+        test: /\.css$/i,
+        include: path.resolve(__dirname, 'src/assets/styles'),
         use: [
-          process.env.NODE_ENV !== 'production'
-            ? 'style-loader'
-            : MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: isDev,
+              reloadAll: true
+            }
+          },
+          'css-loader'
+        ],
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        include: path.resolve(__dirname, 'src/assets/styles'),
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: isDev,
+              reloadAll: true
+            }
+          },
           'css-loader',
           'sass-loader',
+        ],
+      },
+      {
+        test: /\.less$/i,
+        include: path.resolve(__dirname, 'src/assets/styles'),
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: isDev,
+              reloadAll: true
+            }
+          },
+          'css-loader',
+          'less-loader',
         ],
       },
       {
@@ -84,18 +137,11 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: './src/favicon',
+          from: './assets/favicon',
           to: './favicon'
-        },
-        {
-          from: './src/img',
-          to: './img'
-        },
-        {
-          from: './src/uploads',
-          to: './uploads'
         }
       ]
     }),
+    new CleanWebpackPlugin(),
   ].concat(htmlPlugins)
 };
