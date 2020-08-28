@@ -28,8 +28,7 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, 'dist'),
     compress: true,
-    port: 9000,
-    hot: isDev
+    port: 9000
   },
   entry: ['@babel/polyfill', './assets/js/index.js'],
   output: {
@@ -82,13 +81,7 @@ module.exports = {
         test: /\.css$/i,
         include: path.resolve(__dirname, 'src/assets/styles'),
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: isDev,
-              reloadAll: true
-            }
-          },
+          MiniCssExtractPlugin.loader,
           'css-loader'
         ],
       },
@@ -96,13 +89,7 @@ module.exports = {
         test: /\.s[ac]ss$/i,
         include: path.resolve(__dirname, 'src/assets/styles'),
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: isDev,
-              reloadAll: true
-            }
-          },
+          MiniCssExtractPlugin.loader,
           'css-loader',
           'sass-loader',
         ],
@@ -111,13 +98,7 @@ module.exports = {
         test: /\.less$/i,
         include: path.resolve(__dirname, 'src/assets/styles'),
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: isDev,
-              reloadAll: true
-            }
-          },
+          MiniCssExtractPlugin.loader,
           'css-loader',
           'less-loader',
         ],
