@@ -106,7 +106,7 @@ module.exports = {
       {
         test: /\.html$/,
         include: path.resolve(__dirname, 'src/html/includes'),
-        use: ['raw-loader']
+        use: ['html-loader']
       },
     ]
   },

@@ -3,8 +3,8 @@ title: "Заголовок | Проект",
 author: "Roman"
 }; %>
 
-<%= _.template(require('../includes/header.html').default)(data) %>
+<%= _.template(require('../includes/header.html'))(data) %>
 <div class="container">
     <p>Контент.</p>
 </div>
-<%= _.template(require('../includes/footer.html').default)(data) %>
+<%= _.template(require('../includes/footer.html'))(data) %>
