@@ -26,13 +26,14 @@ const htmlPlugins = generateHtmlPlugins(path.resolve(__dirname, 'src/html/views'
 module.exports = {
   context: path.resolve(__dirname, 'src'),
   devServer: {
-    contentBase: path.resolve(__dirname, 'dist'),
+    contentBase: path.resolve(__dirname, 'build'),
     compress: true,
     port: 9000
   },
   entry: ['@babel/polyfill', './assets/js/index.js'],
   output: {
-    filename: './js/[name].[hash].js'
+    filename: './js/[name].[hash].js',
+    path: path.resolve(__dirname, 'build'),
   },
   optimization: {
     splitChunks: {
@@ -54,8 +55,7 @@ module.exports = {
         }
       },
       {
-        test: /\.(png|jpe?g|gif)$/i,
-        include: path.resolve(__dirname, 'src/assets/images'),
+        test: /\.(png|jpg|jpeg|gif|svg)$/i,
         use: {
           loader: 'file-loader',
           options: {
@@ -66,8 +66,7 @@ module.exports = {
         },
       },
       {
-        test: /\.(ttf|eot|woff|woff2|svg)$/,
-        include: path.resolve(__dirname, 'src/assets/fonts'),
+        test: /\.(ttf|eot|woff|woff2)$/i,
         use: {
           loader: 'file-loader',
           options: {
@@ -79,50 +78,60 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        include: path.resolve(__dirname, 'src/assets/styles'),
         use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader'
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: '../',
+            }
+          },
+          'css-loader',
         ],
       },
       {
         test: /\.s[ac]ss$/i,
-        include: path.resolve(__dirname, 'src/assets/styles'),
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: '../',
+            }
+          },
           'css-loader',
-          'sass-loader',
+          'resolve-url-loader',
+          'sass-loader?sourceMap',
         ],
       },
       {
         test: /\.less$/i,
-        include: path.resolve(__dirname, 'src/assets/styles'),
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: '../',
+            }
+          },
           'css-loader',
+          'resolve-url-loader',
           'less-loader',
         ],
       },
       {
         test: /\.html$/,
-        include: path.resolve(__dirname, 'src/html/includes'),
-        loader: 'html-loader',
-        options: {
-          minimize: false,
-        },
+        // include: path.resolve(__dirname, 'src/html/includes'),
+        use: ['html-loader']
       },
     ]
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: './css/[name].[contenthash].css',
-      chunkFilename: './css/[id].css',
+      filename: 'styles/[name].[contenthash].css'
     }),
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: './assets/favicon',
-          to: './favicon'
+          from: 'assets/favicon',
+          to: ''
         }
       ]
     }),
