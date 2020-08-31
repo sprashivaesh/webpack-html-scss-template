@@ -5,8 +5,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
-const isDev = process.env.NODE_ENV === 'development'
-const isProd = !isDev
+const isDev = process.env.NODE_ENV === 'development';
+const isProd = !isDev;
+
+// get host
+const os = require('os');
+const networkInterfaces = os.networkInterfaces();
+const host = networkInterfaces.en1.find(ipO => (ipO.family === 'IPv4')).address;
+// get host end
 
 function generateHtmlPlugins(templateDir) {
   const templateFiles = fs.readdirSync(path.resolve(__dirname, templateDir));
@@ -28,7 +34,9 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, 'build'),
     compress: true,
-    port: 9000
+    host: host,
+    port: 9000,
+    disableHostCheck: true
   },
   entry: ['@babel/polyfill', './assets/js/index.js'],
   output: {
