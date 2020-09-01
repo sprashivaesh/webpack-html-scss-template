@@ -8,12 +8,6 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = !isDev;
 
-// get host
-const os = require('os');
-const networkInterfaces = os.networkInterfaces();
-const host = networkInterfaces.en1.find(ipO => (ipO.family === 'IPv4')).address;
-// get host end
-
 function generateHtmlPlugins(templateDir) {
   const templateFiles = fs.readdirSync(path.resolve(__dirname, templateDir));
   return templateFiles.map(item => {
@@ -32,11 +26,11 @@ const htmlPlugins = generateHtmlPlugins(path.resolve(__dirname, 'src/html/views'
 module.exports = {
   context: path.resolve(__dirname, 'src'),
   devServer: {
+    open: 'Google Chrome',
     contentBase: path.resolve(__dirname, 'build'),
-    compress: true,
-    host: host,
-    port: 9000,
-    disableHostCheck: true
+    host: '0.0.0.0',
+    useLocalIp: true,
+    port: 9000
   },
   entry: ['@babel/polyfill', './assets/js/index.js'],
   output: {
