@@ -123,6 +123,17 @@ module.exports = {
         // include: path.resolve(__dirname, 'src/html/includes'),
         use: ['html-loader']
       },
+      {
+        test: /\.ejs$/,
+        use: [
+          {
+            loader: 'ejs-loader',
+            options: {
+              esModule: false
+            }
+          }
+        ]
+      }
     ]
   },
   plugins: [
